@@ -9,9 +9,9 @@ import jakarta.ws.rs.Produces;
 public class GuideTouristiqueResource {
     @GET
     @Path("lieu/{ville_ou_pays}")
-    @Produces("text/plain")
-    public String getLieuTexte(@PathParam("ville_ou_pays") String villeOuPays) {
-        // Test initial : on retourne directement la String reçue
-        return villeOuPays;
+    @Produces("application/json") // JAX-RS va transformer le tableau en JSON
+    public String[] getLieuJson(@PathParam("ville_ou_pays") String villeOuPays) {
+        // On retourne un tableau dont le seul élément est le paramètre de l'URL
+        return new String[] { villeOuPays };
     }
 }
