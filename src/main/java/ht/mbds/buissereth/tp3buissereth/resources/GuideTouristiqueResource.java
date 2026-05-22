@@ -19,10 +19,15 @@ public class GuideTouristiqueResource {
             @QueryParam("nb") @DefaultValue("2") int nbEndroits) {
 
         try {
-            // Appel à l'API du LLM via notre service LangChain4j injecté
-            String reponseJson = llmClient.getGuideService().obtenirInfosLieu(villeOuPays, nbEndroits);
+            //ici, on construit la chaine avec les paramètres de l'utilisateur
+            String requeteLlm = "Donne-moi des informations sur : " + villeOuPays
+                    + ". Je veux voir exactement les " + nbEndroits
+                    + " principaux endroits à visiter.";
 
-            // Construction de la réponse HTTP enrichie (CORS inclus)
+            // On envoie la phrase toute faite au service
+            String reponseJson = llmClient.getGuideService().obtenirInfosLieu(requeteLlm);
+
+            // Envoi de la réponse avec désactivation du cache
             return Response.ok(reponseJson)
                     .header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
                     .header("Pragma", "no-cache")
@@ -31,7 +36,6 @@ public class GuideTouristiqueResource {
                     .build();
 
         } catch (Exception e) {
-            // Gestion d'erreur propre en cas de défaillance du LLM ou de clé API absente
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"erreur\": \"Impossible de joindre l'IA : " + e.getMessage() + "\"}")
                     .build();
